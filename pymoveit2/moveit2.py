@@ -1,6 +1,7 @@
 import threading
 from enum import Enum
 from typing import List, Optional, Tuple, Union
+import time
 
 from action_msgs.msg import GoalStatus
 from geometry_msgs.msg import Point, Pose, PoseStamped, Quaternion
@@ -64,6 +65,7 @@ class MoveIt2:
         base_link_name: str,
         end_effector_name: str,
         group_name: str = "arm",
+        namespace_prefix: str = "",
         execute_via_moveit: bool = False,
         ignore_new_calls_while_executing: bool = False,
         callback_group: Optional[CallbackGroup] = None,
@@ -106,7 +108,7 @@ class MoveIt2:
         # Create subscriber for current joint states
         self._node.create_subscription(
             msg_type=JointState,
-            topic="joint_states",
+            topic=self.namespace_prefix + "joint_states",
             callback=self.__joint_state_callback,
             qos_profile=QoSProfile(
                 durability=QoSDurabilityPolicy.VOLATILE,
@@ -121,7 +123,7 @@ class MoveIt2:
         self.__move_action_client = ActionClient(
             node=self._node,
             action_type=MoveGroup,
-            action_name="move_action",
+            action_name=self.namespace_prefix + "move_action",
             goal_service_qos_profile=QoSProfile(
                 durability=QoSDurabilityPolicy.VOLATILE,
                 reliability=QoSReliabilityPolicy.RELIABLE,
@@ -158,7 +160,7 @@ class MoveIt2:
         # Also create a separate service client for planning
         self._plan_kinematic_path_service = self._node.create_client(
             srv_type=GetMotionPlan,
-            srv_name="plan_kinematic_path",
+            srv_name=self.namespace_prefix + "plan_kinematic_path",
             qos_profile=QoSProfile(
                 durability=QoSDurabilityPolicy.VOLATILE,
                 reliability=QoSReliabilityPolicy.RELIABLE,
@@ -172,7 +174,7 @@ class MoveIt2:
         # Create a separate service client for Cartesian planning
         self._plan_cartesian_path_service = self._node.create_client(
             srv_type=GetCartesianPath,
-            srv_name="compute_cartesian_path",
+            srv_name=self.namespace_prefix + "compute_cartesian_path",
             qos_profile=QoSProfile(
                 durability=QoSDurabilityPolicy.VOLATILE,
                 reliability=QoSReliabilityPolicy.RELIABLE,
@@ -187,7 +189,7 @@ class MoveIt2:
         self._execute_trajectory_action_client = ActionClient(
             node=self._node,
             action_type=ExecuteTrajectory,
-            action_name="execute_trajectory",
+            action_name=self.namespace_prefix + "execute_trajectory",
             goal_service_qos_profile=QoSProfile(
                 durability=QoSDurabilityPolicy.VOLATILE,
                 reliability=QoSReliabilityPolicy.RELIABLE,
@@ -222,14 +224,14 @@ class MoveIt2:
         )
 
         self.__collision_object_publisher = self._node.create_publisher(
-            CollisionObject, "/collision_object", 10
+            CollisionObject, self.namespace_prefix + "/collision_object", 10
         )
         self.__attached_collision_object_publisher = self._node.create_publisher(
-            AttachedCollisionObject, "/attached_collision_object", 10
+            AttachedCollisionObject, self.namespace_prefix + "/attached_collision_object", 10
         )
 
         self.__cancellation_pub = self._node.create_publisher(
-            String, "/trajectory_execution_event", 1
+            String, self.namespace_prefix + "/trajectory_execution_event", 1
         )
 
         self.__joint_state_mutex = threading.Lock()
@@ -1957,7 +1959,7 @@ class MoveIt2:
     def __init_compute_fk(self):
         self.__compute_fk_client = self._node.create_client(
             srv_type=GetPositionFK,
-            srv_name="compute_fk",
+            srv_name=self.namespace_prefix + "compute_fk",
             callback_group=self._callback_group,
         )
 
@@ -1974,7 +1976,7 @@ class MoveIt2:
         # Service client for IK
         self.__compute_ik_client = self._node.create_client(
             srv_type=GetPositionIK,
-            srv_name="compute_ik",
+            srv_name=self.namespace_prefix + "compute_ik",
             callback_group=self._callback_group,
         )
 
