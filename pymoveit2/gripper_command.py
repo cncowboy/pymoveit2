@@ -26,6 +26,7 @@ class GripperCommand:
         gripper_joint_names: List[str],
         open_gripper_joint_positions: Union[float, List[float]],
         closed_gripper_joint_positions: Union[float, List[float]],
+        gripper_namespace_prefix: str = "",
         max_effort: float = 0.0,
         ignore_new_calls_while_executing: bool = True,
         callback_group: Optional[CallbackGroup] = None,
@@ -45,12 +46,13 @@ class GripperCommand:
         """
 
         self._node = node
+        self.gripper_namespace_prefix = gripper_namespace_prefix
         self._callback_group = callback_group
 
         # Create subscriber for current joint states
         self._node.create_subscription(
             msg_type=JointState,
-            topic="joint_states",
+            topic=self.gripper_namespace_prefix + "joint_states",
             callback=self.__joint_state_callback,
             qos_profile=QoSProfile(
                 durability=QoSDurabilityPolicy.VOLATILE,

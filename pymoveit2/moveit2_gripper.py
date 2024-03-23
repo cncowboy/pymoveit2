@@ -20,6 +20,7 @@ class MoveIt2Gripper(MoveIt2):
         open_gripper_joint_positions: List[float],
         closed_gripper_joint_positions: List[float],
         gripper_group_name: str = "gripper",
+        gripper_namespace_prefix: str = "",
         execute_via_moveit: bool = False,
         ignore_new_calls_while_executing: bool = False,
         skip_planning: bool = False,
@@ -52,6 +53,8 @@ class MoveIt2Gripper(MoveIt2):
                                together with a separate planning service client
         """
 
+        self.gripper_namespace_prefix = gripper_namespace_prefix
+
         # Check for deprecated parameters
         if execute_via_moveit:
             node.get_logger().warn(
@@ -69,6 +72,7 @@ class MoveIt2Gripper(MoveIt2):
             base_link_name="",
             end_effector_name="",
             group_name=gripper_group_name,
+            namespace_prefix=gripper_namespace_prefix,
             ignore_new_calls_while_executing=ignore_new_calls_while_executing,
             callback_group=callback_group,
             use_move_group_action=use_move_group_action,

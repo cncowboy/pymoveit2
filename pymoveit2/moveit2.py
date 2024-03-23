@@ -224,14 +224,14 @@ class MoveIt2:
         )
 
         self.__collision_object_publisher = self._node.create_publisher(
-            CollisionObject, self.namespace_prefix + "/collision_object", 10
+            CollisionObject, self.namespace_prefix + "collision_object", 10
         )
         self.__attached_collision_object_publisher = self._node.create_publisher(
-            AttachedCollisionObject, self.namespace_prefix + "/attached_collision_object", 10
+            AttachedCollisionObject, self.namespace_prefix + "attached_collision_object", 10
         )
 
         self.__cancellation_pub = self._node.create_publisher(
-            String, self.namespace_prefix + "/trajectory_execution_event", 1
+            String, self.namespace_prefix + "trajectory_execution_event", 1
         )
 
         self.__joint_state_mutex = threading.Lock()
