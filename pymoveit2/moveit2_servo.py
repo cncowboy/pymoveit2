@@ -59,12 +59,12 @@ class MoveIt2Servo:
         # Create service clients
         self.__start_service = self._node.create_client(
             srv_type=Trigger,
-            srv_name=self.namespace_prefix + "servo_node/start_servo",
+            srv_name=self.namespace_prefix + "/servo_node/start_servo",
             callback_group=callback_group,
         )
         self.__stop_service = self._node.create_client(
             srv_type=Trigger,
-            srv_name=self.namespace_prefix + "servo_node/stop_servo",
+            srv_name=self.namespace_prefix + "/servo_node/stop_servo",
             callback_group=callback_group,
         )
         self.__trigger_req = Trigger.Request()
