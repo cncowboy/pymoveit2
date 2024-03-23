@@ -92,6 +92,7 @@ class MoveIt2:
         """
 
         self._node = node
+        self.namespace_prefix = namespace_prefix
         self._callback_group = callback_group
 
         # Check for deprecated parameters
